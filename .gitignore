@@ -1,0 +1,24 @@
+# dependencies
+/api/node_modules
+
+# IDE
+/api/.idea
+/api/.awcache
+/api/.vscode
+
+# misc
+/apinpm-debug.log
+
+# example
+/api/quick-start
+
+# tests
+/api/test
+/api/coverage
+/api/.nyc_output
+
+# dist
+/api/dist
+
+# logs
+/api/logs

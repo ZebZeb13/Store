@@ -1,0 +1,63 @@
+{
+	"title": "Welcome to react using react-i18next",
+	"description": {
+		"part1": "Pour commencer, editer <1>src/App.js</1> et enregistrer pour recharger.",
+		"part2": "Switch language between english and german using buttons above."
+	},
+	"user": {
+		"settings": {
+			"text": "Paramètres",
+			"languages": {
+				"text": "Langues",
+				"english": "Anglais",
+				"french": "Français"
+			}
+		},
+		"firstName": {
+			"text": "Prénom",
+			"error": {
+				"required": "Merci de rentrer votre prénom!"
+			}
+		},
+		"lastName": {
+			"text": "Nom",
+			"error": {
+				"required": "Merci de rentrer votre nom!"
+			}
+		},
+		"emailAddress": {
+			"text": "Adresse email",
+			"error": {
+				"required": "Merci de rentrer votre adresse email!",
+				"type": "Email non valid!"
+			}
+		},
+		"password": {
+			"text": "Mot de passe",
+			"error": {
+				"required": "Merci de rentrer votre mot de passe!",
+				"minLength": "Mot de passe trop court (minimun {{PASSWORD_MIN_LENGTH}})"
+			}
+		},
+		"passwordConfirmation": {
+			"text": "Confirmation mot de passe",
+			"error": {
+				"required": "Merci de confirmer votre mot de passe!",
+				"correspondence": "Les mots de passes sont différents"
+			}
+		},
+		"generalConditions": {
+			"text": "Conditions générales d'utilisation",
+			"error": {
+				"required": "Merci de confirmer les conditions générales d'utilisation"
+			}
+		},
+		"rememberMe": {
+			"text": "Se rappeler de moi"
+		},
+		"signup": "Inscription",
+		"signin": "Connnexion",
+		"signout": "Déconnnexion",
+		"alreadyHaveAcount": "Vous-avez déjà un compte? Connexion"
+	}
+}

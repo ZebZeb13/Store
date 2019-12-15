@@ -1,0 +1,64 @@
+{
+	"title": "Welcome to react using react-i18next",
+	"description": {
+		"part1": "To get started, edit <1>src/App.js</1> and save to reload.",
+		"part2": "Switch language between english and german using buttons above."
+	},
+	"user": {
+		"settings": {
+			"text": "Settings",
+			"languages": {
+				"text": "Languages",
+				"english": "English",
+				"french": "French"
+			}
+		},
+
+		"firstName": {
+			"text": "First Name",
+			"error": {
+				"required": "Please enter your first name!"
+			}
+		},
+		"lastName": {
+			"text": "Last Name",
+			"error": {
+				"required": "Please enter your last name!"
+			}
+		},
+		"emailAddress": {
+			"text": "Email Address",
+			"error": {
+				"required": "Please enter your email!",
+				"type": "The input is not valid E-mail!"
+			}
+		},
+		"password": {
+			"text": "Password",
+			"error": {
+				"required": "Please enter your password!",
+				"minLength": "Password too short (minimun {{PASSWORD_MIN_LENGTH}})"
+			}
+		},
+		"passwordConfirmation": {
+			"text": "Password Confirmation",
+			"error": {
+				"required": "Please confirm your password!",
+				"correspondence": "Two passwords that you enter are inconsistent!"
+			}
+		},
+		"generalConditions": {
+			"text": "General Conditions",
+			"error": {
+				"required": "Please confirm general conditions"
+			}
+		},
+		"rememberMe": {
+			"text": "Remember me"
+		},
+		"signup": "Sign Up",
+		"signin": "Sign In",
+		"signout": "Sign Out",
+		"alreadyHaveAcount": "Already have an account? Sign in"
+	}
+}

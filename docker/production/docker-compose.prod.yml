@@ -1,0 +1,93 @@
+version: '3'
+services:
+  server:
+    build:
+      context: ../../.
+      dockerfile: docker/server/Dockerfile.prod
+    image: myapp-server
+    deploy:
+      resources: # Set these values when you know what you do!
+        limits:
+          cpus: '0.001'
+          memory: 50M
+        reservations:
+          cpus: '0.0001'
+          memory: 20M
+    ports:
+      - '${EXTERN_SERVER_IP}:80:80' # Connect localhost 80 port to container 80 port
+    links: # Link services to access http://app and  http://api inside the container
+      - api:api
+      - app:app
+
+
+# ---------------APP---------------
+      
+  app:
+    build:
+      context: ../../.
+      dockerfile: docker/app/Dockerfile.prod
+    image: myapp-app
+    environment:
+      - NODE_ENV=production
+    volumes: # For webpack dev server to use our local files
+      - ./../../app:/usr/src/app
+    ports:
+      - ${EXTERN_APP_SERVER_PORT}:${INTERN_APP_SERVER_PORT} # For docker to now where to redirect HMR queries
+    # networks: 
+    #   main:
+    #     ipv4_address: ${APP_SERVER_DOCKER_IP}
+
+# ---------------API---------------
+
+  api:
+    deploy:
+      resources: # Set these values when you know what you do!
+        limits:
+          cpus: '0.001'
+          memory: 50M
+        reservations:
+          cpus: '0.0001'
+          memory: 20M
+    build:
+      context: ../../.
+      dockerfile: docker/api/Dockerfile.prod
+    
+    env_file: ./.env
+    image: myapp-api
+    environment:
+      - NODE_ENV=production
+    links:
+      - db:db
+    volumes:
+      - ./../../api:/usr/src/api
+    ports:
+      - ${API_SERVER_PORT}
+    depends_on:
+      - "db"
+      - "mqtt-broker"
+    # networks: 
+    #   main:
+    #     ipv4_address:  ${API_SERVER_DOCKER_IP}
+
+
+# ---------------DATA BASE---------------
+
+  db:
+    image: mysql:5
+        volumes:
+      - ../../data:/data/db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+    ports:
+      - ${EXTERN_DB_PORT}:${INTERN_DB_PORT}
+      
+# ---------------NETWORK---------------
+
+# networks: 
+#   mqtt:
+#       ipam:
+#         driver: default
+#         config:
+#           - subnet: 87.98.180.0/24
