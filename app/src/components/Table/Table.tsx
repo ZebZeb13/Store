@@ -33,7 +33,7 @@ export const useStyles = makeStyles((theme: Theme) =>
 			minWidth: 750,
 		},
 		tableWrapper: {
-			maxHeight: 600,
+			maxHeight: 300,
 			position: "relative",
 			zIndex: 1,
 			margin: "auto",

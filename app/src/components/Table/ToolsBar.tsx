@@ -15,12 +15,12 @@ import Tooltip from "@material-ui/core/Tooltip";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import DeleteIcon from "@material-ui/icons/Delete";
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 
 import { User, Category } from "../../gql/type";
 import { UserRole } from "../../private-route/roles";
-import { Button, Grid, Tab } from "@material-ui/core";
+import { Button, Grid, Tab, Menu, MenuItem } from "@material-ui/core";
 import { Interface } from "readline";
 
 const useToolbarStyles = makeStyles((theme: Theme) =>
@@ -52,9 +52,21 @@ interface IProps {
 	numSelected: number;
 }
 
-export default  function ToolsBarTable(props: IProps){
+export default function ToolsBarTable(props: IProps) {
 	const classes = useToolbarStyles();
 	const { numSelected } = props;
+
+	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
+
+
 
 	return (
 		<Toolbar
@@ -86,12 +98,29 @@ export default  function ToolsBarTable(props: IProps){
 					</IconButton>
 				</Tooltip>
 			) : (
-				<Tooltip title="Filter list">
-					<IconButton aria-label="filter list">
-						<MoreVertIcon />
-					</IconButton>
-				</Tooltip>
+				<div>
+					<Tooltip title="Tools">
+						<IconButton
+							aria-label="Tools"
+							onClick={handleClick}
+						>
+							<MoreVertIcon />
+						</IconButton>
+					</Tooltip>
+					<Menu
+						id="simple-menu"
+						anchorEl={anchorEl}
+						keepMounted
+						open={Boolean(anchorEl)}
+						onClose={handleClose}
+					>
+						<MenuItem onClick={handleClose}>
+							Columns
+						</MenuItem>
+					</Menu>
+
+				</div>
 			)}
 		</Toolbar>
 	);
-};
+}

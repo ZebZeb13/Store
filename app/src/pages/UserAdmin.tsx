@@ -8,7 +8,7 @@ import gql from "graphql-tag";
 import { useActions } from "../actions";
 import * as AuthActions from "../actions/auth";
 import { useState } from "react";
-import Table, { Column, IRow } from "../components/table/Table";
+import Table, { Column, IRow } from "../components/Table/Table";
 import { UserRole } from "../private-route/roles";
 import { Button } from "@material-ui/core";
 
