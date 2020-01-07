@@ -184,7 +184,7 @@ export default function CustomTable({ rows, columnsBase }: IProps) {
 
 	return (
 		<Paper className={classes.root}>
-			<ToolsBarTable numSelected={selected.length} />
+			<ToolsBarTable label='Users' numSelected={selected.length} onDelete={() => {console.log('delete')}}/>
 
 			<div className={classes.tableWrapper}>
 				<Table

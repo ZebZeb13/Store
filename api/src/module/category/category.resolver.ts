@@ -25,10 +25,10 @@ export class CategoryResolver {
     return await this.categoryService.findAll();
   }
 
-  @Query(() => Category)
-  async user(@Args('id') id: number): Promise<Category> {
-    return (await this.categoryService.findOnByID(id));
-  }
+  // @Query(() => Category)
+  // async user(@Args('id') id: number): Promise<Category> {
+  //   return (await this.categoryService.findOnByID(id));
+  // }
 
   @Mutation(() => Category)
   @UseGuards(GqlAuthGuard)

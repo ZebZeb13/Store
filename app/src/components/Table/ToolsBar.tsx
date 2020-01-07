@@ -49,24 +49,17 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 );
 
 interface IProps {
+	label: string;
 	numSelected: number;
+	onDelete: () => void;
 }
 
-export default function CustomToolsBar(props: IProps) {
+export default function CustomToolsBar({label, numSelected, onDelete}: IProps) {
 	const classes = useToolbarStyles();
-	const { numSelected } = props;
 
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
-
-
+	const handleClickDelete = () => {
+		onDelete();
+	}
 
 	return (
 		<Toolbar
@@ -88,36 +81,17 @@ export default function CustomToolsBar(props: IProps) {
 					variant="h6"
 					id="tableTitle"
 				>
-					User
+					{label}
 				</Typography>
 			)}
 			{numSelected > 0 ? (
 				<Tooltip title="Delete">
-					<IconButton aria-label="delete">
+					<IconButton aria-label="delete" onClick={() => handleClickDelete()}>
 						<DeleteIcon />
 					</IconButton>
 				</Tooltip>
 			) : (
 				<div>
-					{/* <Tooltip title="Tools">
-						<IconButton
-							aria-label="Tools"
-							onClick={handleClick}
-						>
-							<MoreVertIcon />
-						</IconButton>
-					</Tooltip>
-					<Menu
-						id="simple-menu"
-						anchorEl={anchorEl}
-						keepMounted
-						open={Boolean(anchorEl)}
-						onClose={handleClose}
-					>
-						<MenuItem onClick={handleClose}>
-							Columns
-						</MenuItem>
-					</Menu> */}
 
 				</div>
 			)}

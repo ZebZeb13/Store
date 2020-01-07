@@ -51,8 +51,8 @@ type Mutation {
 
 type Query {
   categories: [Category!]!
-  user(id: Int!): User!
   whoami: User!
+  user(id: Int!): User!
   users(page: Int!, pageSize: Int!, search: String, sortingColumn: String, sortingDirection: String): ResultTableOutput!
 }
 

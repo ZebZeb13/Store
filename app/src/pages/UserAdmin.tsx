@@ -4,7 +4,14 @@ import { makeStyles, createStyles } from "@material-ui/styles";
 import { RouteComponentProps, Redirect } from "react-router-dom";
 import SignInForm from "../components/SignInForm";
 import { useMutation, useQuery } from "react-apollo";
-import { Auth, SignIn, User } from "../gql/type";
+import {
+	Auth,
+	SignIn,
+	User,
+	ResultOutput,
+	IdInput,
+	IdsInput,
+} from "../gql/type";
 import gql from "graphql-tag";
 import { useActions } from "../actions";
 import * as AuthActions from "../actions/auth";
@@ -35,12 +42,14 @@ import {
 	ColumnChooser,
 } from "@devexpress/dx-react-grid-material-ui";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import VisibilityIcon from "@material-ui/icons/Visibility";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { IconButton, Theme } from "@material-ui/core";
+import { IconButton, Theme, Grid as GridMUI } from "@material-ui/core";
 import { lighten } from "@material-ui/core/styles";
 import CustomToolsBar from "../components/Table/ToolsBar";
+import AdminViewDialog from "../components/User/AdminViewDialog";
 
-interface Props extends RouteComponentProps<void> {}
+interface IProps {}
 
 const GET_USERS = gql`
 	query users(
@@ -73,43 +82,87 @@ const GET_USERS = gql`
 	}
 `;
 
-const DeleteFormater = (id: number) => (
-	<IconButton aria-label="delete">
-		<DeleteIcon />
-	</IconButton>
-);
-const DeleteTypeProvider = (props: any) => (
-	<DataTypeProvider formatterComponent={DeleteFormater} {...props} />
-);
+const REMOVE_USER = gql`
+	mutation removeUser($data: IdInput!) {
+		removeUser(data: $data) {
+			success
+			description
+		}
+	}
+`;
 
-function UserAdminPage(props: Props) {
+const REMOVE_USERS = gql`
+	mutation removeUsers($data: IdsInput!) {
+		removeUsers(data: $data) {
+			success
+			description
+		}
+	}
+`;
+
+//----------------------------------------------------------------------------------------------
+function UserAdminPage({}: IProps) {
 	const classes = useStyles();
 
 	const { error, loading, data, refetch } = useQuery(GET_USERS, {
 		variables: { page: 0, pageSize: 5 },
 	});
 
+	const [
+		removeUser,
+		{
+			error: errorRemoveUser,
+			loading: loadingRemoveUser,
+			data: dataRemoveUser,
+		},
+	] = useMutation<
+		{
+			removeUser: ResultOutput;
+		},
+		{ data: IdInput }
+	>(REMOVE_USER);
+
+	const [
+		removeUsers,
+		{
+			error: errorRemoveUsers,
+			loading: loadingRemoveUsers,
+			data: dataRemoveUsers,
+		},
+	] = useMutation<
+		{
+			removeUsers: ResultOutput;
+		},
+		{ data: IdsInput }
+	>(REMOVE_USERS);
+
+	//----------------------------------------------------------------------------------------------
 	const [columns] = useState([
 		{ name: "id", title: "Id" },
 		{ name: "firstName", title: "First Name" },
 		{ name: "lastName", title: "Last Name" },
 		{ name: "email", title: "Email" },
-		{ name: "delete", title: "Delete", align: "center" },
+		{
+			name: "action",
+			title: "Action",
+			align: "center",
+			getCellValue: (row: any) => row.id,
+		},
 	]);
 	const [tableColumnExtensions] = useState<GridColumnExtension[]>([
 		{ columnName: "id" },
 		{ columnName: "firstName" },
 		{ columnName: "lastName" },
 		{ columnName: "email", width: 200 },
-		{ columnName: "delete", align: "center", width: 100 },
+		{ columnName: "action", align: "center", width: 100 },
 	]);
-	const [deleteColumn] = useState(["delete"]);
+	const [actionColumn] = useState(["action"]);
 	const [leftColumns] = useState([]);
-	const [rightColumns] = useState(["delete"]);
+	const [rightColumns] = useState(["action"]);
 
 	const [hiddenColumnNames, setHiddenColumnNames] = useState<any[]>([]);
 
-	const [rows, setRows] = useState([]);
+	const [rows, setRows] = useState<User[]>([]);
 	const [totalCount, setTotalCount] = useState(0);
 	const [pageSize, setPageSize] = useState(5);
 	const [currentPage, setCurrentPage] = useState(0);
@@ -126,7 +179,18 @@ function UserAdminPage(props: Props) {
 	const [sorting, setSorting] = useState<Sorting[]>([
 		{ columnName: "id", direction: "asc" },
 	]);
+	const [sortingStateColumnExtensions] = useState([
+		{ columnName: "action", sortingEnabled: false },
+	]);
 	const [selection, setSelection] = useState<any[]>([]);
+
+	const [refresh, setRefresh] = useState<boolean>(false);
+
+	const [openView, setOpenView] = React.useState(false);
+
+	const [idView, setIdView] = useState<undefined | number>(undefined);
+
+	//----------------------------------------------------------------------------------------------
 
 	const loadData = () => {
 		const parameters = {
@@ -150,19 +214,91 @@ function UserAdminPage(props: Props) {
 			setTotalCount(data.users.totalCount);
 		}
 	}
+	if ((loadingRemoveUser === true || loadingRemoveUsers === true) && refresh === false) {
+		setRefresh(true);
+	}
+	if (refresh === true && loadingRemoveUser === false && loadingRemoveUsers === false) {
+		setRefresh(false);
+		refetch(lastQueryParameters);
+	}
 
 	useEffect(() => {
-		console.log(selection);
 		if (loading === false) {
 			loadData();
 		}
 	});
 
+	//----------------------------------------------------------------------------------------------
+
+	const ActionFormater = ({ value }: any) => {
+		return (
+			<GridMUI
+				container
+				direction="row"
+				justify="center"
+				alignItems="center"
+				wrap="nowrap"
+			>
+				<GridMUI item>
+					<IconButton
+						aria-label="View"
+						onClick={() => {
+							setOpenView(true);
+							setIdView(value);
+						}}
+						size="small"
+					>
+						<VisibilityIcon fontSize="small" color="primary" />
+					</IconButton>
+				</GridMUI>
+				<GridMUI item>
+					<IconButton
+						aria-label="delete"
+						onClick={() =>
+							removeUser({ variables: { data: { id: value } } })
+						}
+						size="small"
+					>
+						<DeleteIcon fontSize="small" color="secondary" />
+					</IconButton>
+				</GridMUI>
+			</GridMUI>
+		);
+	};
+	const ActionTypeProvider = (props: any) => (
+		<DataTypeProvider formatterComponent={ActionFormater} {...props} />
+	);
+
+	//----------------------------------------------------------------------------------------------
+
 	return (
 		<div>
+			{idView ? (
+				<AdminViewDialog
+					id={idView}
+					open={openView}
+					onClose={() => setOpenView(false)}
+				/>
+			) : null}
 			{/* <span>Total rows selected: {selection.length}</span> */}
 			<Paper style={{ position: "relative" }}>
-				<CustomToolsBar numSelected={selection.length} />
+				<CustomToolsBar
+					label="Users"
+					numSelected={selection.length}
+					onDelete={() => {
+						removeUsers({
+							variables: {
+								data: {
+									ids: selection.map(index => {
+										return rows[index].id;
+									}),
+								},
+							},
+						});
+						setSelection([]);
+					}}
+				/>
+				{/* {loading && <CircularProgress />} */}
 				<Grid rows={rows} columns={columns}>
 					<SelectionState
 						selection={selection}
@@ -172,6 +308,7 @@ function UserAdminPage(props: Props) {
 					<SortingState
 						sorting={sorting}
 						onSortingChange={setSorting}
+						columnExtensions={sortingStateColumnExtensions}
 					/>
 					<PagingState
 						currentPage={currentPage}
@@ -181,7 +318,7 @@ function UserAdminPage(props: Props) {
 					/>
 					<CustomPaging totalCount={totalCount} />
 
-					<DeleteTypeProvider for={deleteColumn} />
+					<ActionTypeProvider for={actionColumn} />
 					{/* <IntegratedPaging /> */}
 					<VirtualTable />
 					<Table columnExtensions={tableColumnExtensions} />
@@ -201,7 +338,6 @@ function UserAdminPage(props: Props) {
 					/>
 					<PagingPanel pageSizes={pageSizes} />
 				</Grid>
-				{loading && <CircularProgress />}
 			</Paper>
 		</div>
 	);
@@ -231,28 +367,3 @@ const useStyles = makeStyles({
 });
 
 export default UserAdminPage;
-
-const useToolbarStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		root: {
-			paddingLeft: theme.spacing(2),
-			paddingRight: theme.spacing(1),
-		},
-		highlight:
-			theme.palette.type === "light"
-				? {
-						color: theme.palette.secondary.main,
-						backgroundColor: lighten(
-							theme.palette.secondary.light,
-							0.85
-						),
-				  }
-				: {
-						color: theme.palette.text.primary,
-						backgroundColor: theme.palette.secondary.dark,
-				  },
-		title: {
-			flex: "1 1 100%",
-		},
-	})
-);

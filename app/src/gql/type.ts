@@ -45,6 +45,13 @@ export interface Auth {
     user: User;
 }
 
+export interface IdInput {
+    id: number;
+}
+export interface IdsInput {
+    ids: number[];
+}
+
 export  interface SignUp {
     email: string;
     password: string;
@@ -55,4 +62,9 @@ export  interface SignUp {
 export  interface SignIn {
     email: string;
     password: string;
+}
+
+export interface ResultOutput {
+    success: boolean;
+    description: string;
 }

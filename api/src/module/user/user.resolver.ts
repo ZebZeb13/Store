@@ -41,8 +41,10 @@ export class UserResolver {
   }
 
   @Query(() => User)
-  async user(@Args() data: IdArgs): Promise<User> {
-    return await this.userService.findOneByID(data.id);
+  async user(@Args() {id}: IdArgs): Promise<User> {
+    console.log(id);
+    console.log("hello");
+    return await this.userService.findOneByID(id);
   }
 
   @Query(() => ResultTableOutput)
