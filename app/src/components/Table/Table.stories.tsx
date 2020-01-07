@@ -10,6 +10,7 @@ import HeaderTable from "./Header";
 import { IFilters } from "./Filters";
 import TableTest from "./TableTest";
 import TableTestBis from "./TableTestBis";
+import TableTestBisBis from './TestTableBisBis';
 
 const displayContentConst = (data: any) => {
 	return (
@@ -143,7 +144,36 @@ const columnsConst: Column[] = [
 	},
 ];
 
-const rows: IRow[] = [{ id: "1", string: "test test test test test test test test test test test test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" }, { id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" }, { id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" }, { id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" },{ id: "1", string: "test", int: "test" }];
+const rows: IRow[] = [
+	{
+		id: "1",
+		string: "test test test test test test test test test test test test",
+		int: "test",
+	},
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+	{ id: "1", string: "test", int: "test" },
+];
 storiesOf("Table", module)
 	.addDecorator(withKnobs)
 	.addDecorator(muiTheme())
@@ -156,4 +186,7 @@ storiesOf("Table", module)
 	})
 	.add("test bis", () => {
 		return <TableTestBis />;
+	})
+	.add("test bis bis", () => {
+		return <TableTestBisBis />;
 	});

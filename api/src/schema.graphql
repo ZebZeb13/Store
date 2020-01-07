@@ -28,6 +28,10 @@ input IdInput {
   id: Int!
 }
 
+input IdsInput {
+  ids: [Int!]!
+}
+
 input LinkUser {
   categoryId: Float!
   userId: Float!
@@ -38,6 +42,9 @@ type Mutation {
   linkCategoryUser(data: LinkUser!): Category!
   removeMe: ResultOutput!
   removeUser(data: IdInput!): ResultOutput!
+  removeUsers(data: IdsInput!): ResultOutput!
+  generateUsers: Boolean!
+  deleteGeneratedUsers: Boolean!
   signIn(data: SignInInput!): Auth!
   signUp(data: SignUpInput!): Auth!
 }
@@ -46,13 +53,18 @@ type Query {
   categories: [Category!]!
   user(id: Int!): User!
   whoami: User!
-  users(page: Int!): [User!]!
+  users(page: Int!, pageSize: Int!, search: String, sortingColumn: String, sortingDirection: String): ResultTableOutput!
 }
 
 type ResultOutput {
   """result"""
   success: Boolean!
   description: String!
+}
+
+type ResultTableOutput {
+  users: [User!]!
+  totalCount: Float!
 }
 
 input SignInInput {

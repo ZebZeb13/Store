@@ -52,7 +52,7 @@ interface IProps {
 	numSelected: number;
 }
 
-export default function ToolsBarTable(props: IProps) {
+export default function CustomToolsBar(props: IProps) {
 	const classes = useToolbarStyles();
 	const { numSelected } = props;
 
@@ -99,7 +99,7 @@ export default function ToolsBarTable(props: IProps) {
 				</Tooltip>
 			) : (
 				<div>
-					<Tooltip title="Tools">
+					{/* <Tooltip title="Tools">
 						<IconButton
 							aria-label="Tools"
 							onClick={handleClick}
@@ -117,7 +117,7 @@ export default function ToolsBarTable(props: IProps) {
 						<MenuItem onClick={handleClose}>
 							Columns
 						</MenuItem>
-					</Menu>
+					</Menu> */}
 
 				</div>
 			)}

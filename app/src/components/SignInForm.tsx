@@ -205,9 +205,9 @@ function SignInForm({ submit, error }: IProps) {
 					</Button>
 					<Grid container justify="flex-end">
 						<Grid item>
-							<Link href="/signin" variant="body2">
+							<Link href="/signup" variant="body2">
 								<Trans i18nKey="user.alreadyHaveAcount">
-									Already have an account? Sign in
+									Don't have acount? Sign up
 								</Trans>
 							</Link>
 						</Grid>
