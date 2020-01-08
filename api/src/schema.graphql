@@ -40,6 +40,7 @@ input LinkUser {
 type Mutation {
   createCategory(data: CreateInput!): Category!
   linkCategoryUser(data: LinkUser!): Category!
+  updateUserNames(data: UpdateInput!): ResultOutput!
   removeMe: ResultOutput!
   removeUser(data: IdInput!): ResultOutput!
   removeUsers(data: IdsInput!): ResultOutput!
@@ -75,6 +76,12 @@ input SignInInput {
 input SignUpInput {
   email: String!
   password: String!
+  firstName: String
+  lastName: String
+}
+
+input UpdateInput {
+  id: Int!
   firstName: String
   lastName: String
 }

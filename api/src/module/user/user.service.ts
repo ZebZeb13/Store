@@ -29,6 +29,9 @@ export class UserService {
     const user = await this.userRepository.findOne(id, {
       relations: ['categoryConnection'],
     });
+    if (!user) {
+      throw new UserErrorException(UserError.NOT_FOUND);
+    }
     return user;
   }
 
@@ -55,8 +58,19 @@ export class UserService {
     return { users, totalCount };
   }
 
-  async removeOneByID(data: IdInput) {
-    const user = await this.userRepository.findOne(data.id, {
+
+  async updateOneByID(user: User, firstName?: string, lastName?: string) {
+    if (firstName) {
+      user.firstName = firstName;
+    }
+    if (lastName) {
+      user.lastName = name;
+    }
+    return await this.userRepository.save(user);
+  }
+
+  async removeOneByID(id: number) {
+    const user = await this.userRepository.findOne(id, {
       relations: ['categoryConnection'],
     });
     if (!user) {

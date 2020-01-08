@@ -24,6 +24,7 @@ import { HttpExceptionFilter } from '../../common/filter/http-exception.filer';
 import { IdsInput } from '../../common/dto/ids.input';
 import { ResultTableOutput } from './dto/resultTable.output';
 import { UserTableArgs } from './model/args/table.args';
+import { UpdateInput } from './dto/updateNames.input';
 
 @Resolver(of => User)
 // @UseInterceptors(LoggingInterceptor)
@@ -41,9 +42,7 @@ export class UserResolver {
   }
 
   @Query(() => User)
-  async user(@Args() {id}: IdArgs): Promise<User> {
-    console.log(id);
-    console.log("hello");
+  async user(@Args() { id }: IdArgs): Promise<User> {
     return await this.userService.findOneByID(id);
   }
 
@@ -58,18 +57,29 @@ export class UserResolver {
   // --------------------------------------------------------------------------------------------
 
   @Mutation(() => ResultOutput)
+  // @Roles(UserRole.ADMIN)
+  async updateUserNames(@Args('data') data: UpdateInput): Promise<User> {
+    const user = await this.userService.findOneByID(data.id);
+    const userResult = await this.userService.updateOneByID(user, data.firstName, data.lastName);
+    return userResult;
+  }
+
+
+  @Mutation(() => ResultOutput)
   async removeMe(@GqlUser() user: User): Promise<ResultOutput> {
-    const userResult = await this.userService.removeOneByID({ id: user.id });
+    const userResult = await this.userService.removeOneByID(user.id);
     return {
       success: userResult.id === undefined ? true : false,
       description: 'Remove user',
     };
   }
 
+
+
   @Mutation(() => ResultOutput)
   // @Roles(UserRole.ADMIN)
   async removeUser(@Args('data') data: IdInput): Promise<ResultOutput> {
-    const userResult = await this.userService.removeOneByID(data);
+    const userResult = await this.userService.removeOneByID(data.id);
     return {
       success: userResult.id === undefined ? true : false,
       description: 'Remove user',
