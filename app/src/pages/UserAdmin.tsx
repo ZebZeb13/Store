@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { makeStyles, createStyles } from "@material-ui/styles";
 import { RouteComponentProps, Redirect } from "react-router-dom";
 import SignInForm from "../components/SignInForm";
-import { useMutation, useQuery } from "react-apollo";
+import { useMutation, useQuery, useLazyQuery } from "react-apollo";
 import {
 	Auth,
 	SignIn,
@@ -48,8 +48,25 @@ import { IconButton, Theme, Grid as GridMUI } from "@material-ui/core";
 import { lighten } from "@material-ui/core/styles";
 import CustomToolsBar from "../components/Table/ToolsBar";
 import AdminViewDialog from "../components/User/AdminViewDialog";
+import { da } from "date-fns/esm/locale";
 
-interface IProps {}
+interface IProps { }
+
+const GET_USER = gql`
+	query user($id: Int!) {
+		user(id: $id) {
+			id
+			registeredAt
+			firstName
+			lastName
+			email
+			roles
+			categories {
+				name
+			}
+		}
+	}
+`;
 
 const GET_USERS = gql`
 	query users(
@@ -101,8 +118,10 @@ const REMOVE_USERS = gql`
 `;
 
 //----------------------------------------------------------------------------------------------
-function UserAdminPage({}: IProps) {
+function UserAdminPage({ }: IProps) {
 	const classes = useStyles();
+
+	const [getUser, {error: errorUser, loading: loadingUser, data: dataUser }] = useLazyQuery(GET_USER);
 
 	const { error, loading, data, refetch } = useQuery(GET_USERS, {
 		variables: { page: 0, pageSize: 5 },
@@ -188,7 +207,7 @@ function UserAdminPage({}: IProps) {
 
 	const [openView, setOpenView] = React.useState(false);
 
-	const [idView, setIdView] = useState<undefined | number>(undefined);
+	const [userView, setUserView] = useState<undefined | User>(undefined);
 
 	//----------------------------------------------------------------------------------------------
 
@@ -222,6 +241,10 @@ function UserAdminPage({}: IProps) {
 		refetch(lastQueryParameters);
 	}
 
+	if(loadingUser === false && dataUser && dataUser.user && dataUser.user !== userView){
+		setUserView(dataUser.user);
+	}
+	console.log({data: dataUser, loading: loadingUser});
 	useEffect(() => {
 		if (loading === false) {
 			loadData();
@@ -244,7 +267,7 @@ function UserAdminPage({}: IProps) {
 						aria-label="View"
 						onClick={() => {
 							setOpenView(true);
-							setIdView(value);
+							getUser({variables:{id: value}})
 						}}
 						size="small"
 					>
@@ -273,9 +296,9 @@ function UserAdminPage({}: IProps) {
 
 	return (
 		<div>
-			{idView ? (
+			{userView ? (
 				<AdminViewDialog
-					id={idView}
+					user={userView}
 					open={openView}
 					onClose={() => setOpenView(false)}
 				/>

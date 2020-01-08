@@ -25,7 +25,7 @@ const styles = (theme: Theme) =>
 	createStyles({
 		root: {
 			margin: 0,
-            padding: theme.spacing(2),
+			padding: theme.spacing(2),
 		},
 		closeButton: {
 			position: "absolute",
@@ -72,78 +72,54 @@ const DialogActions = withStyles((theme: Theme) => ({
 	},
 }))(MuiDialogActions);
 
-const GET_USER = gql`
-	query user($id: Int!) {
-		user(id: $id) {
-			id
-			registeredAt
-			firstName
-			lastName
-			email
-			roles
-			categories {
-				name
-			}
-		}
-	}
-`;
+
 
 interface IProps {
-	id: number;
+	user: User;
 	open: boolean;
 	onClose: () => void;
 }
 
-export default function AdminViewDialog({ id, open, onClose }: IProps) {
-	const { error, loading, data, refetch } = useQuery(GET_USER, {
-		variables: { id },
-	});
+export default function AdminViewDialog({ user, open, onClose }: IProps) {
 
 	const handleClose = () => {
 		onClose();
 	};
 
-	console.log(loading);
-	console.log(data);
 
-	let user: undefined | User = data ? data.user : undefined;
 	return (
 		<Dialog
 			onClose={handleClose}
 			aria-labelledby="customized-dialog-title"
-            open={open}
-            fullWidth
+			open={open}
+			fullWidth
 		>
-			{loading === true || !user ? (
-				<CircularProgress />
-			) : (
-				<div>
-					<DialogTitle
-						id="customized-dialog-title"
-						onClose={handleClose}
+			<div>
+				<DialogTitle
+					id="customized-dialog-title"
+					onClose={handleClose}
+				>
+					{user.firstName} {user.lastName}
+				</DialogTitle>
+				<DialogContent dividers>User</DialogContent>
+				<DialogActions>
+					<Button
+						variant="contained"
+						color="primary"
+
+						startIcon={<EditIcon />}
 					>
-						{user.firstName} {user.lastName}
-					</DialogTitle>
-					<DialogContent dividers>User</DialogContent>
-					<DialogActions>
-                    <Button
-							variant="contained"
-							color="primary"
-							
-							startIcon={<EditIcon />}
-						>
-							Edit
+						Edit
 						</Button>
-        				<Button
-							variant="contained"
-							color='secondary'
-							startIcon={<SaveIcon />}
-						>
-							Save
+					<Button
+						variant="contained"
+						color='secondary'
+						startIcon={<SaveIcon />}
+					>
+						Save
 						</Button>
-					</DialogActions>
-				</div>
-			)}
+				</DialogActions>
+			</div>
 		</Dialog>
 	);
 }
