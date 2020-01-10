@@ -49,24 +49,9 @@ import { lighten } from "@material-ui/core/styles";
 import CustomToolsBar from "../components/Table/ToolsBar";
 import AdminViewDialog from "../components/User/AdminViewDialog";
 import { da } from "date-fns/esm/locale";
+import ActionTypeProvider from "../components/Table/ActionTypeProvider";
 
-interface IProps { }
-
-const GET_USER = gql`
-	query user($id: Int!) {
-		user(id: $id) {
-			id
-			registeredAt
-			firstName
-			lastName
-			email
-			roles
-			categories {
-				name
-			}
-		}
-	}
-`;
+interface IProps {}
 
 const GET_USERS = gql`
 	query users(
@@ -118,10 +103,8 @@ const REMOVE_USERS = gql`
 `;
 
 //----------------------------------------------------------------------------------------------
-function UserAdminPage({ }: IProps) {
+function UserAdminPage({}: IProps) {
 	const classes = useStyles();
-
-	const [getUser, {error: errorUser, loading: loadingUser, data: dataUser }] = useLazyQuery(GET_USER);
 
 	const { error, loading, data, refetch } = useQuery(GET_USERS, {
 		variables: { page: 0, pageSize: 5 },
@@ -203,15 +186,13 @@ function UserAdminPage({ }: IProps) {
 	]);
 	const [selection, setSelection] = useState<any[]>([]);
 
-	const [refresh, setRefresh] = useState<boolean>(false);
-
 	const [openView, setOpenView] = React.useState(false);
 
-	const [userView, setUserView] = useState<undefined | User>(undefined);
+	const [userIdView, setUserIdView] = useState<undefined | number>(undefined);
 
 	//----------------------------------------------------------------------------------------------
 
-	const loadData = () => {
+	const loadData = (force: boolean = false) => {
 		const parameters = {
 			page: currentPage,
 			pageSize,
@@ -220,90 +201,49 @@ function UserAdminPage({ }: IProps) {
 			sortingDirection: sorting[0].direction,
 		};
 		if (
-			JSON.stringify(parameters) !== JSON.stringify(lastQueryParameters)
+			JSON.stringify(parameters) !==
+				JSON.stringify(lastQueryParameters) ||
+			force == true
 		) {
 			refetch(parameters);
 			setLastQueryParameters(parameters);
 		}
 	};
 
-	if (data) {
-		if (data.users.users !== rows) {
+	useEffect(() => {
+		if (data && data.users && data.users.users) {
 			setRows(data.users.users);
 			setTotalCount(data.users.totalCount);
 		}
-	}
-	if ((loadingRemoveUser === true || loadingRemoveUsers === true) && refresh === false) {
-		setRefresh(true);
-	}
-	if (refresh === true && loadingRemoveUser === false && loadingRemoveUsers === false) {
-		setRefresh(false);
-		refetch(lastQueryParameters);
-	}
+	}, [data]);
 
-	if(loadingUser === false && dataUser && dataUser.user && dataUser.user !== userView){
-		setUserView(dataUser.user);
-	}
-	console.log({data: dataUser, loading: loadingUser});
 	useEffect(() => {
 		if (loading === false) {
 			loadData();
 		}
-	});
+	}, [searchValue, sorting, pageSize, currentPage]);
 
+	useEffect(() => {
+		loadData(true);
+	}, [dataRemoveUser, dataRemoveUsers]);
 	//----------------------------------------------------------------------------------------------
 
-	const ActionFormater = ({ value }: any) => {
-		return (
-			<GridMUI
-				container
-				direction="row"
-				justify="center"
-				alignItems="center"
-				wrap="nowrap"
-			>
-				<GridMUI item>
-					<IconButton
-						aria-label="View"
-						onClick={() => {
-							setOpenView(true);
-							getUser({variables:{id: value}})
-						}}
-						size="small"
-					>
-						<VisibilityIcon fontSize="small" color="primary" />
-					</IconButton>
-				</GridMUI>
-				<GridMUI item>
-					<IconButton
-						aria-label="delete"
-						onClick={() =>
-							removeUser({ variables: { data: { id: value } } })
-						}
-						size="small"
-					>
-						<DeleteIcon fontSize="small" color="secondary" />
-					</IconButton>
-				</GridMUI>
-			</GridMUI>
-		);
-	};
-	const ActionTypeProvider = (props: any) => (
-		<DataTypeProvider formatterComponent={ActionFormater} {...props} />
-	);
+
 
 	//----------------------------------------------------------------------------------------------
 
 	return (
 		<div>
-			{userView ? (
+			{userIdView ? (
 				<AdminViewDialog
-					user={userView}
+					id={userIdView}
 					open={openView}
-					onClose={() => setOpenView(false)}
+					onClose={() => {
+						setOpenView(false);
+						setUserIdView(undefined);
+					}}
 				/>
 			) : null}
-			{/* <span>Total rows selected: {selection.length}</span> */}
 			<Paper style={{ position: "relative" }}>
 				<CustomToolsBar
 					label="Users"
@@ -341,7 +281,19 @@ function UserAdminPage({ }: IProps) {
 					/>
 					<CustomPaging totalCount={totalCount} />
 
-					<ActionTypeProvider for={actionColumn} />
+					<ActionTypeProvider
+						for={actionColumn}
+						onView={(id: number) => {
+							setOpenView(true);
+							setUserIdView(id);
+						}}
+						onDelete={(id: number) => {
+							removeUser({
+								variables: { data: { id} },
+							});
+							setSelection([]);
+						}}
+					/>
 					{/* <IntegratedPaging /> */}
 					<VirtualTable />
 					<Table columnExtensions={tableColumnExtensions} />

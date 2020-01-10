@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
 	createStyles,
 	Theme,
@@ -15,10 +15,10 @@ import CloseIcon from "@material-ui/icons/Close";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import gql from "graphql-tag";
-import { useQuery } from "react-apollo";
+import { useQuery, useLazyQuery } from "react-apollo";
 import { User } from "../../gql/type";
 
-import EditIcon from '@material-ui/icons/Edit';
+import EditIcon from "@material-ui/icons/Edit";
 import SaveIcon from "@material-ui/icons/Save";
 
 const styles = (theme: Theme) =>
@@ -41,8 +41,7 @@ export interface DialogTitleProps extends WithStyles<typeof styles> {
 	onClose: () => void;
 }
 
-const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
-	const { children, classes, onClose, ...other } = props;
+const DialogTitle = withStyles(styles)(({ children, classes, onClose, ...other }: DialogTitleProps) => {
 	return (
 		<MuiDialogTitle disableTypography className={classes.root} {...other}>
 			<Typography variant="h6">{children}</Typography>
@@ -72,20 +71,44 @@ const DialogActions = withStyles((theme: Theme) => ({
 	},
 }))(MuiDialogActions);
 
-
+const GET_USER = gql`
+	query user($id: Int!) {
+		user(id: $id) {
+			id
+			registeredAt
+			firstName
+			lastName
+			email
+			roles
+			categories {
+				name
+			}
+		}
+	}
+`;
 
 interface IProps {
-	user: User;
+	id: number;
 	open: boolean;
 	onClose: () => void;
 }
 
-export default function AdminViewDialog({ user, open, onClose }: IProps) {
+export default function AdminViewDialog({ id, open, onClose }: IProps) {
+	const [user, setUser] = useState<undefined | User>(undefined);
+
+	const { error, loading, data, refetch } = useQuery(GET_USER, {
+		variables: { id },
+	});
 
 	const handleClose = () => {
 		onClose();
 	};
 
+	useEffect(() => {
+		if (data && data.user) {
+			setUser(data.user);
+		}
+	}, [data]);
 
 	return (
 		<Dialog
@@ -94,32 +117,35 @@ export default function AdminViewDialog({ user, open, onClose }: IProps) {
 			open={open}
 			fullWidth
 		>
-			<div>
-				<DialogTitle
-					id="customized-dialog-title"
-					onClose={handleClose}
-				>
-					{user.firstName} {user.lastName}
-				</DialogTitle>
-				<DialogContent dividers>User</DialogContent>
-				<DialogActions>
-					<Button
-						variant="contained"
-						color="primary"
-
-						startIcon={<EditIcon />}
+			{loading || !user ? (
+				<CircularProgress />
+			) : (
+				<div>
+					<DialogTitle
+						id="customized-dialog-title"
+						onClose={handleClose}
 					>
-						Edit
+						{user.firstName} {user.lastName}
+					</DialogTitle>
+					<DialogContent dividers>User</DialogContent>
+					<DialogActions>
+						<Button
+							variant="contained"
+							color="primary"
+							startIcon={<EditIcon />}
+						>
+							Edit
 						</Button>
-					<Button
-						variant="contained"
-						color='secondary'
-						startIcon={<SaveIcon />}
-					>
-						Save
+						<Button
+							variant="contained"
+							color="secondary"
+							startIcon={<SaveIcon />}
+						>
+							Save
 						</Button>
-				</DialogActions>
-			</div>
+					</DialogActions>
+				</div>
+			)}
 		</Dialog>
 	);
 }

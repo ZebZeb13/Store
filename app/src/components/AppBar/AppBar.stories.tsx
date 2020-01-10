@@ -22,4 +22,4 @@ storiesOf("AppBar", module)
 		],
 	})
     .addDecorator(muiTheme())
-	.add("Simple", () => <CustomTabs />)
+	.add("Simple", () => <CustomTabs />);

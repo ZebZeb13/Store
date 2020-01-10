@@ -26,6 +26,7 @@ import { ResultTableOutput } from './dto/resultTable.output';
 import { UserTableArgs } from './model/args/table.args';
 import { UpdateInput } from './dto/updateNames.input';
 
+
 @Resolver(of => User)
 // @UseInterceptors(LoggingInterceptor)
 // @UseGuards(GqlAuthGuard, RolesGuard)
