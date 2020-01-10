@@ -15,7 +15,12 @@ switch (process.env.NODE_ENV) {
 dotenv.config({ path });
 
 
+
 import { NestFactory } from '@nestjs/core';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { NestJsLogger } from './common/logger/nestJs.logger';
 import { HttpExceptionFilter } from './common/filter/http-exception.filer';
@@ -23,11 +28,13 @@ import { LoggingInterceptor } from './common/logger/interceptor/logging.intercep
 import { CustomLogger } from './common/logger/logger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-  });
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(/*{logger: true}*/),
+  );
   // app.useLogger(app.get(Logger));
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new LoggingInterceptor());
-  await app.listen(3001/*process.env.PORT*/);
+  await app.listen(3001/*process.env.PORT*/, '0.0.0.0');
 }
 bootstrap();
