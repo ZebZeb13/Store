@@ -15,7 +15,6 @@ switch (process.env.NODE_ENV) {
 dotenv.config({ path });
 
 
-
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,

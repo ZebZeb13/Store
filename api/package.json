@@ -1,5 +1,5 @@
 {
-  "name": "DeviStore",
+  "name": "deviStore",
   "version": "1.0.0",
   "description": "Database",
   "license": "MIT",
@@ -18,9 +18,10 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typedoc": "typedoc --mode modules -module commonjs --exclude **/*.spec.ts --out docs/typedoc src",
-    "compodoc": "npx compodoc -p ./tsconfig.json -s -o -w --port 5555"
+    "compodoc": "npx compodoc -p ./tsconfig.json --port 5555 -s -w -o --disableRoutesGraph"
   },
   "dependencies": {
+    "@compodoc/compodoc": "^1.1.11",
     "@nestjs/common": "6.8.5",
     "@nestjs/core": "6.8.5",
     "@nestjs/graphql": "^6.5.3",

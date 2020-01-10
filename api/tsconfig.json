@@ -18,9 +18,5 @@
   "exclude": [
     "node_modules",
     "dist"
-  ],
-  "typedocOptions": {
-    "mode": "modules",
-    "out": "docs"
-  }
+  ]
 }

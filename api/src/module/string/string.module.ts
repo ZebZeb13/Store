@@ -8,6 +8,7 @@ import { ObjectTemplate } from '../../module/object/entities/template.entity';
 import { StringTemplateLinker } from './entities/templateLinker.entity';
 import { StringLinker } from './entities/linker.entity';
 
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([ObjectItem]),
