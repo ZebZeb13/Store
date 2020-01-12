@@ -64,7 +64,7 @@ export class UserService {
       user.firstName = firstName;
     }
     if (lastName) {
-      user.lastName = name;
+      user.lastName = lastName;
     }
     return await this.userRepository.save(user);
   }
@@ -82,22 +82,25 @@ export class UserService {
     return this.userRepository.remove(user);
   }
 
-  async removeOneByIDs(data: IdsInput) {
-    const users = await this.userRepository.find({
-      where: {
-        id: In(data.ids),
-      },
-      relations: ['categoryConnection'],
-    });
-    if (!users) {
-      throw new UserErrorException(UserError.NOT_FOUND);
-    }
-    users.forEach(user => {
-      if (user.categoryConnection) {
-        this.categoryService.removeCreatorByID({ id: user.id });
+  async removeByIDs(ids: number[]) {
+    if (ids.length > 0) {
+      const users = await this.userRepository.find({
+        where: {
+          id: In(ids),
+        },
+        relations: ['categoryConnection'],
+      });
+      if (!users) {
+        throw new UserErrorException(UserError.NOT_FOUND);
       }
-    });
-    return this.userRepository.remove(users);
+      users.forEach(user => {
+        if (user.categoryConnection) {
+          this.categoryService.removeCreatorByID({ id: user.id });
+        }
+      });
+      return this.userRepository.remove(users);
+    }
+    return false;
   }
 
   async generate() {

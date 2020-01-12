@@ -57,11 +57,11 @@ export class UserResolver {
 
   // --------------------------------------------------------------------------------------------
 
-  @Mutation(() => ResultOutput)
+  @Mutation(() => User)
   // @Roles(UserRole.ADMIN)
-  async updateUserNames(@Args('data') data: UpdateInput): Promise<User> {
-    const user = await this.userService.findOneByID(data.id);
-    const userResult = await this.userService.updateOneByID(user, data.firstName, data.lastName);
+  async updateUser(@Args('data') { id, firstName, lastName }: UpdateInput): Promise<User> {
+    const user = await this.userService.findOneByID(id);
+    const userResult = await this.userService.updateOneByID(user, firstName, lastName);
     return userResult;
   }
 
@@ -76,11 +76,10 @@ export class UserResolver {
   }
 
 
-
   @Mutation(() => ResultOutput)
   // @Roles(UserRole.ADMIN)
-  async removeUser(@Args('data') data: IdInput): Promise<ResultOutput> {
-    const userResult = await this.userService.removeOneByID(data.id);
+  async removeUser(@Args('data') { id }: IdInput): Promise<ResultOutput> {
+    const userResult = await this.userService.removeOneByID(id);
     return {
       success: userResult.id === undefined ? true : false,
       description: 'Remove user',
@@ -89,10 +88,10 @@ export class UserResolver {
 
   @Mutation(() => ResultOutput)
   // @Roles(UserRole.ADMIN)
-  async removeUsers(@Args('data') data: IdsInput): Promise<ResultOutput> {
-    const userResult = await this.userService.removeOneByIDs(data);
+  async removeUsers(@Args('data') { ids }: IdsInput): Promise<ResultOutput> {
+    const userResult = await this.userService.removeByIDs(ids);
     return {
-      success: true,
+      success: userResult === false ? false : true,
       description: 'Remove users',
     };
   }
