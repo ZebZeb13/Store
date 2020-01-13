@@ -1,5 +1,5 @@
-export interface MainTemplateLinkerInterface {
-  readonly templateId: number;
-  readonly objectTemplateId: number;
-  readonly field: number;
+export default interface MainTemplateLinkerInterface {
+  templateId: number;
+  objectTemplateId: number;
+  field: number;
 }

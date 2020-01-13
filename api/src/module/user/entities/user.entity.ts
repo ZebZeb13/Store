@@ -21,7 +21,7 @@ export enum UserRole {
   DEVELOPER = 'developer',
 }
 
-registerEnumType(UserRole, {name: 'UserRole', description: 'user roles'});
+registerEnumType(UserRole, { name: 'UserRole', description: 'user roles' });
 
 @ObjectType()
 @Entity('user')
@@ -67,7 +67,7 @@ export class User {
     type: 'set',
     enum: UserRole,
     default: [],
-})
+  })
   roles: UserRole[];
 
   @OneToMany(
@@ -84,7 +84,7 @@ export class User {
   @JoinColumn()
   objects: ObjectItem[];
 
-  @Field(() => [Category], {nullable: true})
+  @Field(() => [Category], { nullable: true })
   categories: Category[];
 
   @OneToMany(

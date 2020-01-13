@@ -10,7 +10,6 @@ import { User, UserRole } from './entities/user.entity';
 
 import { Auth } from '../auth/model/auth';
 import { PaginationArgs } from '../../common/dto/pagination.args';
-import { UserEmailArgs } from './model/args/useremail.args';
 import { CategoryResolver } from '../category/category.resolver';
 import { Category } from '../category/entities/category.entity';
 import { CategoryService } from '../category/category.service';
@@ -23,8 +22,10 @@ import { LoggingInterceptor } from '../../common/logger/interceptor/logging.inte
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filer';
 import { IdsInput } from '../../common/dto/ids.input';
 import { ResultTableOutput } from './dto/resultTable.output';
-import { UserTableArgs } from './model/args/table.args';
-import { UpdateInput } from './dto/updateNames.input';
+import { UpdateInput } from './dto/update.input';
+import { UserTableArgs } from './dto/table.args';
+import UpdateRolesInput from './dto/updateRoles.input';
+import { MailService } from '../mail/mail.service';
 
 
 @Resolver(of => User)
@@ -35,6 +36,8 @@ export class UserResolver {
     private userService: UserService,
     @Inject(forwardRef(() => CategoryService))
     private categoryService: CategoryService,
+    @Inject(forwardRef(() => MailService))
+    private mailService: MailService,
   ) { }
   // --------------------------------------------------------------------------------------------
   @Query(() => User)
@@ -50,8 +53,7 @@ export class UserResolver {
   @Query(() => ResultTableOutput)
   // @Roles(UserRole.ADMIN)
   async users(@Args() { page, pageSize, search, sortingColumn, sortingDirection }: UserTableArgs): Promise<ResultTableOutput> {
-    console.log(search);
-    return await this.userService.find(page, pageSize, search, sortingColumn, sortingDirection);
+    return await this.userService.find({ page, pageSize, search, sortingColumn, sortingDirection });
   }
 
 
@@ -61,14 +63,22 @@ export class UserResolver {
   // @Roles(UserRole.ADMIN)
   async updateUser(@Args('data') { id, firstName, lastName }: UpdateInput): Promise<User> {
     const user = await this.userService.findOneByID(id);
-    const userResult = await this.userService.updateOneByID(user, firstName, lastName);
+    const userResult = await this.userService.update(user, firstName, lastName);
+    return userResult;
+  }
+
+  @Mutation(() => User)
+  // @Roles(UserRole.ADMIN)
+  async updateUserRoles(@Args('data') { id, roles }: UpdateRolesInput): Promise<User> {
+    const user = await this.userService.findOneByID(id);
+    const userResult = await this.userService.updateRoles(user, roles);
     return userResult;
   }
 
 
   @Mutation(() => ResultOutput)
   async removeMe(@GqlUser() user: User): Promise<ResultOutput> {
-    const userResult = await this.userService.removeOneByID(user.id);
+    const userResult = await this.userService.remove(user);
     return {
       success: userResult.id === undefined ? true : false,
       description: 'Remove user',
@@ -79,7 +89,8 @@ export class UserResolver {
   @Mutation(() => ResultOutput)
   // @Roles(UserRole.ADMIN)
   async removeUser(@Args('data') { id }: IdInput): Promise<ResultOutput> {
-    const userResult = await this.userService.removeOneByID(id);
+    const user = await this.userService.findOneByID(id);
+    const userResult = await this.userService.remove(user);
     return {
       success: userResult.id === undefined ? true : false,
       description: 'Remove user',

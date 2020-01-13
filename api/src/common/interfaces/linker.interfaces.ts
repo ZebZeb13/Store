@@ -1,4 +1,4 @@
-export interface MainLinkerInterface {
-  readonly templateId: number;
-  readonly objectId: number;
+export default interface MainLinkerInterface {
+  templateId: number;
+  objectId: number;
 }

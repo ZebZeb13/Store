@@ -41,6 +41,7 @@ type Mutation {
   createCategory(data: CreateInput!): Category!
   linkCategoryUser(data: LinkUser!): Category!
   updateUser(data: UpdateInput!): User!
+  updateUserRoles(data: UpdateRolesInput!): User!
   removeMe: ResultOutput!
   removeUser(data: IdInput!): ResultOutput!
   removeUsers(data: IdsInput!): ResultOutput!
@@ -84,6 +85,11 @@ input UpdateInput {
   id: Int!
   firstName: String
   lastName: String
+}
+
+input UpdateRolesInput {
+  id: Int!
+  roles: [UserRole!]!
 }
 
 type User {

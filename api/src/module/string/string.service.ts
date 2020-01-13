@@ -1,13 +1,13 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getManager } from 'typeorm';
-import { StringTemplateLinkerInterface } from './interfaces/templateLinker.interfaces';
-import { StringTemplateInterface } from './interfaces/template.interfaces';
+import IStringTemplateLinker from './interfaces/templateLinker.interfaces';
+import IStringTemplate from './interfaces/template.interfaces';
 import { StringTemplate } from './entities/template.entity';
 import { StringTemplateLinker } from './entities/templateLinker.entity';
 import { StringLinker } from './entities/linker.entity';
 import { ObjectTemplate } from '../../module/object/entities/template.entity';
-import { StringLinkerInterface } from './interfaces/linker.interfaces';
+import IStringLinker from './interfaces/linker.interfaces';
 import { ObjectItem } from '../../module/object/entities/item.entity';
 
 @Injectable()
@@ -29,7 +29,7 @@ export class StringService {
 
     @InjectRepository(StringLinker)
     private readonly stringLinkerRepository: Repository<StringLinker>,
-  ) {}
+  ) { }
 
   async findAll(): Promise<StringTemplate[]> {
     return await this.stringTemplateRepository.find({
@@ -39,14 +39,14 @@ export class StringService {
     });
   }
 
-  async createTemplate(stringTemplate: StringTemplateInterface) {
+  async createTemplate(stringTemplate: IStringTemplate) {
     const newStringTemplate = new StringTemplate();
     newStringTemplate.name = stringTemplate.name;
     return this.stringTemplateRepository.save(newStringTemplate);
   }
 
   async createTemplateLinker(
-    stringTemplateLinker: StringTemplateLinkerInterface,
+    stringTemplateLinker: IStringTemplateLinker,
   ) {
     const objectTemplate = await this.objectTemplateRepository.findOne(
       stringTemplateLinker.objectTemplateId,
@@ -80,7 +80,7 @@ export class StringService {
     return this.stringTemplateLinkerRepository.save(newStringLinker);
   }
 
-  async createLinker(stringLinker: StringLinkerInterface) {
+  async createLinker(stringLinker: IStringLinker) {
     const object = await this.objectRepository.findOne(stringLinker.objectId, {
       relations: [
         'template',

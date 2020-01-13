@@ -1,3 +1,3 @@
-export interface MainTemplateInterface {
-  readonly name: string;
+export default interface MainTemplateInterface {
+  name: string;
 }

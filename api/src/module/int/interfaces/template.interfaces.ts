@@ -1,3 +1,3 @@
-import { MainTemplateInterface } from "../../../common/interfaces/template.interfaces";
+import MainTemplateInterface from "../../../common/interfaces/template.interfaces";
 
-export interface IntTemplateInterface extends MainTemplateInterface {}
+export default interface IntTemplateInterface extends MainTemplateInterface { }

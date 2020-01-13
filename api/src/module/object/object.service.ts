@@ -13,8 +13,8 @@ import { IntTemplateLinker } from '../int/entities/templateLinker.entity';
 import { IntTemplate } from '../int/entities/template.entity';
 
 import { Category } from '../category/entities/category.entity';
-import { ObjectItemInterface } from './interfaces/item.interfaces';
-import { ObjectTemplateInterface } from './interfaces/template.interfaces';
+import ObjectItemInterface from './interfaces/item.interfaces';
+import ObjectTemplateInterface from './interfaces/template.interfaces';
 
 @Injectable()
 export class ObjectService {
@@ -41,7 +41,7 @@ export class ObjectService {
 
     @InjectRepository(IntTemplateLinker)
     private readonly IntTemplateLinkerRepository: Repository<IntTemplateLinker>,
-  ) {}
+  ) { }
 
   async findAll(): Promise<ObjectItem[]> {
     return await this.objectRepository.find({

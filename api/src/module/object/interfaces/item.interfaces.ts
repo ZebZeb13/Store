@@ -1,4 +1,4 @@
-export interface ObjectItemInterface {
+export default interface ObjectItemInterface {
   readonly templateId: number;
   readonly name: string;
 }

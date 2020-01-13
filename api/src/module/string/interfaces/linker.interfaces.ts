@@ -1,5 +1,5 @@
-import { MainLinkerInterface } from '../../../common/interfaces/linker.interfaces';
+import MainLinkerInterface  from '../../../common/interfaces/linker.interfaces';
 
-export interface StringLinkerInterface extends MainLinkerInterface {
+export default interface StringLinkerInterface extends MainLinkerInterface {
   readonly value: string;
 }

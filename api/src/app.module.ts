@@ -27,6 +27,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { ValidationPipe } from './common/pipes/validation.pipe';
 import { TypeOrmLogger } from './common/logger/typeOrm.logger';
 import { LoggerModule } from './common/logger/logger.module';
+import { MailModule } from './module/mail/mail.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { LoggerModule } from './common/logger/logger.module';
       },
     }),
     LoggerModule,
+    MailModule,
     AuthModule,
     UserModule,
     AuthModule,

@@ -10,9 +10,9 @@ import { IntLinker } from './entities/linker.entity';
 import { IntTemplateLinker } from './entities/templateLinker.entity';
 import { IntTemplate } from './entities/template.entity';
 
-import { IntTemplateInterface } from './interfaces/template.interfaces';
-import { IntTemplateLinkerInterface } from './interfaces/templateLinker.interfaces';
-import { IntLinkerInterface } from './interfaces/linker.interfaces';
+import IIntTemplate from './interfaces/template.interfaces';
+import IIntTemplateLinker from './interfaces/templateLinker.interfaces';
+import IIntLinker from './interfaces/linker.interfaces';
 
 @Injectable()
 export class IntService {
@@ -34,7 +34,7 @@ export class IntService {
 
     @InjectRepository(IntUnity)
     private readonly intUnityRepository: Repository<IntUnity>,
-  ) {}
+  ) { }
 
   async findAll(): Promise<IntTemplate[]> {
     return await this.intTemplateRepository.find({
@@ -52,13 +52,13 @@ export class IntService {
     });
   }
 
-  async createTemplate(intTemplate: IntTemplateInterface) {
+  async createTemplate(intTemplate: IIntTemplate) {
     const newIntTemplate = new IntTemplate();
     newIntTemplate.name = intTemplate.name;
     await this.intTemplateRepository.save(newIntTemplate);
   }
 
-  async createTemplateLinker(intTemplateLinker: IntTemplateLinkerInterface) {
+  async createTemplateLinker(intTemplateLinker: IIntTemplateLinker) {
     const objectTemplate = await this.objectTemplateRepository.findOne(
       intTemplateLinker.objectTemplateId,
       {
@@ -92,7 +92,7 @@ export class IntService {
     return this.intTemplateLinkerRepository.save(newIntLinker);
   }
 
-  async createLinker(intLinker: IntLinkerInterface) {
+  async createLinker(intLinker: IIntLinker) {
     const object = await this.objectRepository.findOne(intLinker.objectId);
     if (!object) {
       throw new HttpException('Object not found', HttpStatus.CONFLICT);

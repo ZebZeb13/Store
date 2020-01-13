@@ -2,11 +2,12 @@ import { Injectable, HttpException, HttpStatus, Inject, forwardRef } from '@nest
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, getRepository } from 'typeorm';
 
-import { User } from './entities/user.entity';
+import { User, UserRole } from './entities/user.entity';
 import { CategoryService } from '../category/category.service';
 import { IdInput } from '../../common/dto/id.input';
 import { UserErrorException, UserError } from './exception/error.exception';
 import { IdsInput } from 'src/common/dto/ids.input';
+import FindInterface from './interface/find.interface';
 
 @Injectable()
 export class UserService {
@@ -35,10 +36,7 @@ export class UserService {
     return user;
   }
 
-  async find(page: number = 0, pageSize: number = 5,
-    search: string | undefined,
-    sortingColumn: string | undefined,
-    sortingDirection: string | undefined) {
+  async find({ page, pageSize, search, sortingColumn, sortingDirection }: FindInterface) {
     let req = getRepository(User).createQueryBuilder('user').select('user').take(pageSize).skip(pageSize * (page));
     if (search) {
       const searchColumn = ['id', 'firstName', 'lastName', 'email'];
@@ -59,7 +57,7 @@ export class UserService {
   }
 
 
-  async updateOneByID(user: User, firstName?: string, lastName?: string) {
+  async update(user: User, firstName?: string, lastName?: string) {
     if (firstName) {
       user.firstName = firstName;
     }
@@ -69,16 +67,16 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  async removeOneByID(id: number) {
-    const user = await this.userRepository.findOne(id, {
-      relations: ['categoryConnection'],
-    });
-    if (!user) {
-      throw new UserErrorException(UserError.NOT_FOUND);
-    }
-    if (user.categoryConnection) {
-      await this.categoryService.removeCreatorByID({ id: user.id });
-    }
+  async updateRoles(user: User, roles: UserRole[]) {
+    user.roles = roles;
+    return await this.userRepository.save(user);
+  }
+
+
+  async remove(user: User) {
+    // if (user.categoryConnection) {
+    //   await this.categoryService.removeCreatorByID({ id: user.id });
+    // }
     return this.userRepository.remove(user);
   }
 
@@ -93,11 +91,11 @@ export class UserService {
       if (!users) {
         throw new UserErrorException(UserError.NOT_FOUND);
       }
-      users.forEach(user => {
-        if (user.categoryConnection) {
-          this.categoryService.removeCreatorByID({ id: user.id });
-        }
-      });
+      // users.forEach(user => {
+      //   if (user.categoryConnection) {
+      //     this.categoryService.removeCreatorByID({ id: user.id });
+      //   }
+      // });
       return this.userRepository.remove(users);
     }
     return false;

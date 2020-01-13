@@ -1,4 +1,4 @@
-import { MainTemplateLinkerInterface } from "../../../common/interfaces/templateLinker.interfaces";
+import MainTemplateLinkerInterface from "../../../common/interfaces/templateLinker.interfaces";
 
-export interface IntTemplateLinkerInterface
-  extends MainTemplateLinkerInterface {}
+export default interface IntTemplateLinkerInterface
+  extends MainTemplateLinkerInterface { }
