@@ -8,7 +8,7 @@ function HomePage(props: Props) {
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>
-			Devistore
+			Store
 		</div>
 	);
 }

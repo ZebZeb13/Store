@@ -75,7 +75,7 @@ function AppBar(props?: Props) {
 			>
 				<Toolbar>
 					<Typography variant="h6" noWrap className={classes.title}>
-						DeviStore
+						Store
 					</Typography>
 					{auth.isAuthentificated ? (
 						<>

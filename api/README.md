@@ -1,4 +1,4 @@
-# DeviStore
+# Store
 
 ## Installation
 

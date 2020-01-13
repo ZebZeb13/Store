@@ -1,5 +1,5 @@
 {
-  "name": "deviStore",
+  "name": "store",
   "version": "1.0.0",
   "description": "Database",
   "license": "MIT",
@@ -71,6 +71,6 @@
     "typescript": "3.6.4"
   },
   "main": "./src/main.ts",
-  "repository": "git@github.com:ZebZeb13/DeviStore.git",
+  "repository": "git@github.com:ZebZeb13/Store.git",
   "author": "ZebZeb13 <chamayou.guilhem13@gmail.com>"
 }

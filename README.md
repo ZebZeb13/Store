@@ -1,4 +1,4 @@
-# DeviStore
+# Store
 
 ![Alt text](./ressources/Electrical-exemple.png?raw=true "Title")
 
