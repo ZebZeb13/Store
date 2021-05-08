@@ -48,7 +48,7 @@
     "rimraf": "3.0.0",
     "rxjs": "6.5.3",
     "simple-node-logger": "^18.12.23",
-    "typeorm": "0.2.20",
+    "typeorm": "0.2.25",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.2.1"
   },
